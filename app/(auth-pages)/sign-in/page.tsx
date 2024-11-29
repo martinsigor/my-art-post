@@ -5,11 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-export default async function Login({ 
-  searchParams 
-}: { 
-  searchParams: { message?: string; error?: string; redirect?: string } 
-}) {
+type PageProps = {
+  searchParams: {
+    message?: string;
+    error?: string;
+    redirect?: string;
+  };
+};
+
+export default function Login({ searchParams }: PageProps) {
   let message: Message | undefined;
   
   if (searchParams.error) {
@@ -48,7 +52,7 @@ export default async function Login({
         <input 
           type="hidden" 
           name="redirect" 
-          value={searchParams.redirect || '/gallery'} 
+          value={searchParams.redirect || '/'} 
         />
         <SubmitButton pendingText="Signing In...">
           Sign in
