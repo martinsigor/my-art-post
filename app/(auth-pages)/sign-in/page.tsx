@@ -5,15 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-type PageProps = {
-  searchParams: {
-    message?: string;
-    error?: string;
-    redirect?: string;
-  };
-};
+interface SearchParams {
+  message?: string;
+  error?: string;
+  redirect?: string;
+}
 
-export default function Login({ searchParams }: PageProps) {
+export default async function Login({ 
+  searchParams 
+}: { 
+  searchParams: SearchParams 
+}) {
   let message: Message | undefined;
   
   if (searchParams.error) {
