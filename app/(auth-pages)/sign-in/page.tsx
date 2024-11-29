@@ -5,10 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  const searchParams = await props.searchParams;
+export default async function Login({ 
+  searchParams 
+}: { 
+  searchParams: { message?: string; error?: string; redirect?: string } 
+}) {
+  let message: Message | undefined;
+  
+  if (searchParams.error) {
+    message = { error: searchParams.error };
+  } else if (searchParams.message) {
+    message = { success: searchParams.message };
+  }
+
   return (
-    <form className="flex-1 flex flex-col min-w-64">
+    <form action={signInAction} className="flex-1 flex flex-col min-w-64">
       <h1 className="text-2xl font-medium">Sign in</h1>
       <p className="text-sm text-foreground">
         Don't have an account?{" "}
@@ -34,10 +45,15 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           placeholder="Your password"
           required
         />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+        <input 
+          type="hidden" 
+          name="redirect" 
+          value={searchParams.redirect || '/gallery'} 
+        />
+        <SubmitButton pendingText="Signing In...">
           Sign in
         </SubmitButton>
-        <FormMessage message={searchParams} />
+        {message && <FormMessage message={message} />}
       </div>
     </form>
   );
