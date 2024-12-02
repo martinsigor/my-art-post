@@ -11,13 +11,11 @@ interface SearchParams {
   redirect?: string;
 }
 
-interface PageProps {
-  searchParams: SearchParams;
-}
-
-export default async function Login({ 
+export default function Login({ 
   searchParams 
-}: PageProps) {
+}: { 
+  searchParams: SearchParams 
+}) {
   let message: Message | undefined;
   
   if (searchParams.error) {
