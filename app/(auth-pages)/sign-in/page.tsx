@@ -5,10 +5,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  const searchParams = await props.searchParams;
+type PageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function Login({ 
+  searchParams 
+}: PageProps) {
+  const params = await searchParams;
+  let message: Message | undefined;
+  
+  if (params.error) {
+    message = { error: params.error as string };
+  } else if (params.message) {
+    message = { success: params.message as string };
+  }
+
   return (
-    <form className="flex-1 flex flex-col min-w-64">
+    <form action={signInAction} className="flex-1 flex flex-col min-w-64">
       <h1 className="text-2xl font-medium">Sign in</h1>
       <p className="text-sm text-foreground">
         Don't have an account?{" "}
@@ -21,12 +35,6 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         <Input name="email" placeholder="you@example.com" required />
         <div className="flex justify-between items-center">
           <Label htmlFor="password">Password</Label>
-          <Link
-            className="text-xs text-foreground underline"
-            href="/forgot-password"
-          >
-            Forgot Password?
-          </Link>
         </div>
         <Input
           type="password"
@@ -34,10 +42,15 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           placeholder="Your password"
           required
         />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+        <input 
+          type="hidden" 
+          name="redirect" 
+          value={params.redirect || '/'} 
+        />
+        <SubmitButton pendingText="Signing In...">
           Sign in
         </SubmitButton>
-        <FormMessage message={searchParams} />
+        {message && <FormMessage message={message} />}
       </div>
     </form>
   );
