@@ -53,15 +53,24 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-4 bg-background">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">My Art Post</h1>
-        <h2 className="text-xl text-gray-600 mb-8">
+        <div className="flex justify-center">
+          <Image
+            src="https://unirjaqquspjcsigpmgz.supabase.co/storage/v1/object/public/artworks/page_elements/Logo%20MAD.png"
+            alt="MAD Logo"
+            width={700}
+            height={700}
+            className="w-auto h-auto"
+          />
+        </div>
+        <h1 className="text-4xl font-bold mb-4 text-foreground">My Art Domain</h1>
+        <h2 className="text-xl text-muted-foreground mb-8">
           A nossa gigantesca e ativa comunidade já tem alguns desenhos para você se basear ou dar seu feedback
         </h2>
         <button 
           onClick={handlePublishClick}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+          className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition"
         >
           Publicar nova arte
         </button>
@@ -69,13 +78,13 @@ export default function GalleryPage() {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="text-xl">Carregando...</div>
+          <div className="text-xl text-foreground">Carregando...</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {artworks.map((artwork) => (
             <Link href={`/gallery/${artwork.id}`} key={artwork.id}>
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+              <div className="bg-card text-card-foreground rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
                 <div className="relative h-64 w-full">
                   <Image
                     src={artwork.image_url}
@@ -86,7 +95,7 @@ export default function GalleryPage() {
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-semibold mb-2">{artwork.title}</h3>
-                  <p className="text-gray-600 line-clamp-2 mb-4">
+                  <p className="text-muted-foreground line-clamp-2 mb-4">
                     {artwork.description}
                   </p>
                   <div className="flex items-center">
@@ -101,8 +110,8 @@ export default function GalleryPage() {
                       </div>
                     )}
                     <div>
-                      <p className="font-medium">{artwork.profiles?.username}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-foreground">{artwork.profiles?.username}</p>
+                      <p className="text-sm text-muted-foreground">
                         {new Date(artwork.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -112,7 +121,7 @@ export default function GalleryPage() {
                       {artwork.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-gray-100 text-gray-600 text-sm px-2 py-1 rounded"
+                          className="bg-secondary text-secondary-foreground text-sm px-2 py-1 rounded"
                         >
                           {tag}
                         </span>
@@ -128,7 +137,7 @@ export default function GalleryPage() {
 
       {!loading && artworks.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-muted-foreground">
             Nenhuma arte publicada ainda. Seja o primeiro a compartilhar!
           </p>
         </div>

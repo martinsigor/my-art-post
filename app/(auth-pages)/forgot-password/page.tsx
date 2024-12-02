@@ -1,37 +1,73 @@
-import { forgotPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { SmtpMessage } from "../smtp-message";
+'use client'
+import styles from '../signup.module.css'
+import Link from 'next/link'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
-export default async function ForgotPassword(props: {
-  searchParams: Promise<Message>;
-}) {
-  const searchParams = await props.searchParams;
+export default function ForgotPassword() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError('')
+    
+    const form = e.currentTarget
+    const formData = new FormData(form)
+    const email = formData.get('email') as string
+    
+    setIsLoading(true)
+    
+    try {
+      const supabase = createClient()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
+
+      if (resetError) {
+        throw resetError
+      }
+
+      // Redirecionar para uma página de confirmação ou mostrar mensagem de sucesso
+      router.push('/sign-in?message=Verifique+seu+email+para+redefinir+sua+senha')
+    } catch (err: any) {
+      setError(err.message || 'Erro ao enviar email de recuperação')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
-    <>
-      <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-64 max-w-64 mx-auto">
-        <div>
-          <h1 className="text-2xl font-medium">Reset Password</h1>
-          <p className="text-sm text-secondary-foreground">
-            Already have an account?{" "}
-            <Link className="text-primary underline" href="/sign-in">
-              Sign in
-            </Link>
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <SubmitButton formAction={forgotPasswordAction}>
-            Reset Password
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
-      <SmtpMessage />
-    </>
-  );
+    <div className={styles.pageContainer}>
+      <div className={styles.container}>
+        <header>Recuperar senha</header>
+
+        <p>Lembrou sua senha? <Link href="/sign-in">Faça login</Link></p>
+
+        {error && <p className={styles.error}>{error}</p>}
+
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="email">Endereço de e-mail</label>
+          <input 
+            type="email" 
+            name="email" 
+            id="email" 
+            required 
+            placeholder="exemplo@dominio.com"
+            disabled={isLoading}
+          />
+
+          <div className={styles.grid}>
+            <div className={styles.butao}>
+              <button type="submit" disabled={isLoading}>
+                {isLoading ? 'Enviando...' : 'Enviar email de recuperação'}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }

@@ -45,7 +45,7 @@ export default function UploadArtwork() {
       const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag)
 
       // Salva o artwork no banco
-      const { error: dbError } = await supabase
+      const { data, error: dbError } = await supabase
         .from('artworks')
         .insert({
           title,
@@ -54,11 +54,14 @@ export default function UploadArtwork() {
           user_id: user.id,
           tags: tagArray
         })
+        .select()
 
       if (dbError) throw dbError
 
-      // Redireciona para a galeria após sucesso
-      router.push('/gallery')
+      // Redireciona para a página específica da arte
+      if (data && data[0]) {
+        router.push(`/gallery/${data[0].id}`)
+      }
 
     } catch (error) {
       console.error('Erro:', error)
