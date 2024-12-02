@@ -5,23 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-interface SearchParams {
-  message?: string;
-  error?: string;
-  redirect?: string;
-}
+type PageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-export default function Login({ 
+export default async function Login({ 
   searchParams 
-}: { 
-  searchParams: SearchParams 
-}) {
+}: PageProps) {
+  const params = await searchParams;
   let message: Message | undefined;
   
-  if (searchParams.error) {
-    message = { error: searchParams.error };
-  } else if (searchParams.message) {
-    message = { success: searchParams.message };
+  if (params.error) {
+    message = { error: params.error as string };
+  } else if (params.message) {
+    message = { success: params.message as string };
   }
 
   return (
@@ -48,7 +45,7 @@ export default function Login({
         <input 
           type="hidden" 
           name="redirect" 
-          value={searchParams.redirect || '/'} 
+          value={params.redirect || '/'} 
         />
         <SubmitButton pendingText="Signing In...">
           Sign in
