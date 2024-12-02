@@ -11,11 +11,13 @@ interface SearchParams {
   redirect?: string;
 }
 
+interface PageProps {
+  searchParams: SearchParams;
+}
+
 export default async function Login({ 
   searchParams 
-}: { 
-  searchParams: SearchParams 
-}) {
+}: PageProps) {
   let message: Message | undefined;
   
   if (searchParams.error) {
@@ -38,12 +40,6 @@ export default async function Login({
         <Input name="email" placeholder="you@example.com" required />
         <div className="flex justify-between items-center">
           <Label htmlFor="password">Password</Label>
-          <Link
-            className="text-xs text-foreground underline"
-            href="/forgot-password"
-          >
-            Forgot Password?
-          </Link>
         </div>
         <Input
           type="password"
