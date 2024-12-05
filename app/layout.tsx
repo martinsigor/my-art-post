@@ -41,7 +41,7 @@ export default function RootLayout({
                   <div className="flex gap-5 items-center font-semibold">
                     <Link href={"/"} className="flex items-center gap-2">
                       <Image 
-                        src="https://unirjaqquspjcsigpmgz.supabase.co/storage/v1/object/public/artworks/page_elements/MAD%20letras.png"
+                        src="https://unirjaqquspjcsigpmgz.supabase.co/storage/v1/object/public/artworks/page_elements/logo%20letra.png"
                         alt="My Art Domain Logo"
                         width={64}
                         height={64}
@@ -70,6 +70,15 @@ export default function RootLayout({
                     rel="noreferrer"
                   >
                     igor.mso
+                  </a>{" "}
+                  e{" "}
+                  <a
+                    href="https://www.linkedin.com/in/j%C3%BAlio-vin%C3%ADcius-da-fonseca-viscardi-b99859330/"
+                    target="_blank"
+                    className="font-bold hover:underline"
+                    rel="noreferrer"
+                  >
+                    julio_fv
                   </a>
                 </p>
                 <ThemeSwitcher />

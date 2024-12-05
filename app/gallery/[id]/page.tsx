@@ -14,6 +14,10 @@ export default function ArtworkPage({ params }: { params: Promise<{ id: string }
   const [user, setUser] = useState<any>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [isOwner, setIsOwner] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editDescription, setEditDescription] = useState('')
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -103,12 +107,71 @@ export default function ArtworkPage({ params }: { params: Promise<{ id: string }
 
       if (data) {
         setArtwork(data)
+        setIsOwner(data.user_id === user?.id)
       }
       setLoading(false)
     }
 
     fetchArtwork()
-  }, [resolvedParams.id])
+  }, [resolvedParams.id, user])
+
+  const handleDelete = async () => {
+    if (confirm('Tem certeza que deseja excluir esta publicação?')) {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('artworks')
+        .delete()
+        .eq('id', resolvedParams.id)
+
+      if (!error) {
+        alert('Publicação excluída com sucesso!')
+        window.location.href = '/' // Redireciona para a galeria
+      } else {
+        alert('Erro ao excluir a publicação.')
+      }
+    }
+  }
+
+  const handleEdit = () => {
+    setEditTitle(artwork.title)
+    setEditDescription(artwork.description)
+    setIsEditModalOpen(true)
+  }
+
+  const handleSubmitEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('artworks')
+        .update({
+          title: editTitle.trim(),
+          description: editDescription.trim(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', resolvedParams.id)
+
+      if (error) throw error
+
+      // Atualiza o estado local com os novos dados
+      setArtwork({
+        ...artwork,
+        title: editTitle.trim(),
+        description: editDescription.trim(),
+        updated_at: new Date().toISOString()
+      })
+
+      setIsEditModalOpen(false)
+      alert('Publicação atualizada com sucesso!')
+    } catch (error) {
+      alert('Erro ao atualizar a publicação.')
+      console.error(error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -181,7 +244,7 @@ export default function ArtworkPage({ params }: { params: Promise<{ id: string }
 
           <div className="flex items-center mb-6">
             {artwork.profiles?.avatar_url && (
-              <div className="relative w-12 h-12 mr-4">
+              <div className="relative w-8 h-8 mr-3">
                 <Image
                   src={artwork.profiles.avatar_url}
                   alt={artwork.profiles.username}
@@ -215,6 +278,23 @@ export default function ArtworkPage({ params }: { params: Promise<{ id: string }
             </div>
           )}
         </div>
+
+        {isOwner && (
+          <div className="flex justify-end gap-4 p-4">
+            <button
+              onClick={handleEdit}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Editar
+            </button>
+            <button
+              onClick={handleDelete}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Excluir
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Seção de Comentários */}
@@ -278,6 +358,49 @@ export default function ArtworkPage({ params }: { params: Promise<{ id: string }
           </p>
         )}
       </div>
+
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-card p-6 rounded-lg shadow-lg max-w-2xl w-full mx-4">
+            <h2 className="text-2xl font-bold mb-4">Editar Publicação</h2>
+            <form onSubmit={handleSubmitEdit}>
+              <div className="mb-4">
+                <label className="block mb-2">Título</label>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2">Descrição</label>
+                <textarea
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  rows={4}
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 border rounded"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

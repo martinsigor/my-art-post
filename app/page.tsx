@@ -4,12 +4,20 @@ import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 
 export default function GalleryPage() {
   const router = useRouter()
+  const { theme, systemTheme } = useTheme()
   const [artworks, setArtworks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+
+  const currentTheme = theme === 'system' ? systemTheme : theme
+  
+  const logoUrl = currentTheme === 'dark' 
+    ? 'https://unirjaqquspjcsigpmgz.supabase.co/storage/v1/object/public/artworks/page_elements/Logo%20pra%20fundo%20preto_1@2x.png'
+    : 'https://unirjaqquspjcsigpmgz.supabase.co/storage/v1/object/public/artworks/page_elements/Logo%20pra%20fundo%20branco@2x.png'
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,14 +63,17 @@ export default function GalleryPage() {
   return (
     <div className="container mx-auto px-4 py-4 bg-background">
       <div className="text-center mb-12">
-        <div className="flex justify-center">
-          <Image
-            src="https://unirjaqquspjcsigpmgz.supabase.co/storage/v1/object/public/artworks/page_elements/Logo%20MAD.png"
-            alt="MAD Logo"
-            width={700}
-            height={700}
-            className="w-auto h-auto"
-          />
+        <div className="flex justify-center mb-16">
+          <div className="w-[400px]">
+            <Image
+              src={logoUrl}
+              alt="MAD Logo"
+              width={500}
+              height={500}
+              className="w-full h-auto"
+              priority
+            />
+          </div>
         </div>
         <h1 className="text-4xl font-bold mb-4 text-foreground">My Art Domain</h1>
         <h2 className="text-xl text-muted-foreground mb-8">

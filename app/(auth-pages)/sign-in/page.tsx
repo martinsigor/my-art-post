@@ -34,7 +34,7 @@ export default function SignIn() {
 
       window.location.href = '/'
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login')
+      setError('Email ou senha incorretos')
       setIsLoading(false)
     }
   }
@@ -57,6 +57,12 @@ export default function SignIn() {
             required 
             placeholder="exemplo@dominio.com"
             disabled={isLoading}
+            className={styles['auth-input']}
+            style={{
+              backgroundColor: 'white',
+              color: '#505050',
+              borderColor: '#9c9c9c',
+            }}
           />
 
           <label htmlFor="password">Senha</label>
@@ -67,6 +73,12 @@ export default function SignIn() {
             required 
             placeholder="Digite sua senha"
             disabled={isLoading}
+            className={styles['auth-input']}
+            style={{
+              backgroundColor: 'white',
+              color: '#505050',
+              borderColor: '#9c9c9c',
+            }}
           />
 
           <div className={styles.grid}>
