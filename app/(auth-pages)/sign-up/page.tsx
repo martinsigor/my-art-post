@@ -65,6 +65,12 @@ export default function SignUp() {
             required 
             placeholder="exemplo@dominio.com"
             disabled={isLoading}
+            className={styles['auth-input']}
+            style={{
+              backgroundColor: 'white',
+              color: '#505050',
+              borderColor: '#9c9c9c',
+            }}
           />
 
           <label htmlFor="password">Senha</label>
@@ -75,6 +81,12 @@ export default function SignUp() {
             required 
             placeholder="Digite sua senha"
             disabled={isLoading}
+            className={styles['auth-input']}
+            style={{
+              backgroundColor: 'white',
+              color: '#505050',
+              borderColor: '#9c9c9c',
+            }}
           />
 
           <div className={styles.grid}>
